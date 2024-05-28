@@ -1,7 +1,6 @@
 Flask
 youtube-transcript-api
-openai
+openai==0.28.1
 requests
 python-dotenv
 gunicorn
-

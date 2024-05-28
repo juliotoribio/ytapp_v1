@@ -45,6 +45,10 @@ class YouTubeScraper:
             return None
 
 def generate_audio(text, api_key, voice_id):
+    if not text:
+        print("El campo 'text' está vacío.")
+        return None
+    
     url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
     headers = {
         "Accept": "audio/mpeg",
@@ -52,7 +56,7 @@ def generate_audio(text, api_key, voice_id):
         "xi-api-key": api_key
     }
     data = {
-        "text": text,
+        "text": text,  # Asegúrate de que este campo está incluido
         "model_id": "eleven_multilingual_v2",
         "voice_settings": {
             "stability": 0.5,
@@ -69,7 +73,8 @@ def generate_audio(text, api_key, voice_id):
                     audio_file.write(chunk)
         return audio_file_path
     else:
-        raise Exception(f"Error al generar audio: {response.text}")
+        print(f"Error al generar audio: {response.text}")
+        return None
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -80,8 +85,14 @@ def index():
             transcript = scraper.get_transcript()
             if transcript:
                 summary = get_summary(transcript)
-                audio_file_path = generate_audio(summary, ELEVENLABS_API_KEY, ELEVENLABS_VOICE_ID)
-                return render_template('index.html', transcript=transcript, summary=summary, audio_file_path=audio_file_path)
+                if summary:
+                    audio_file_path = generate_audio(summary, ELEVENLABS_API_KEY, ELEVENLABS_VOICE_ID)
+                    if audio_file_path:
+                        return render_template('index.html', transcript=transcript, summary=summary, audio_file_path=audio_file_path)
+                    else:
+                        flash("No se pudo generar el audio.", "danger")
+                else:
+                    flash("No se pudo generar el resumen.", "danger")
             else:
                 flash("No se pudo obtener la transcripción.", "danger")
         except ValueError as e:
