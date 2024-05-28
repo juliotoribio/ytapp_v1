@@ -17,7 +17,7 @@ def get_summary(text):
         )
         summary = response.choices[0]['message']['content'].strip()
         return summary
-    except openai.error.InvalidRequestError as e:
+    except openai.error.OpenAIError as e:
         if "maximum context length" in str(e):
             print(f"Transcripción demasiado larga para procesar: {e}")
             return None
