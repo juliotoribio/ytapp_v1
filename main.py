@@ -4,12 +4,16 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from openai_api.openai_utils import get_summary
 import requests
 import os
+from dotenv import load_dotenv
+
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
 ELEVENLABS_API_KEY = os.getenv('ELEVENLABS_API_KEY')
-ELEVENLABS_VOICE_ID = os.getenv('ELEVENLABS_VOICE_ID')  # Reemplaza esto con el ID de la voz que deseas usar
+ELEVENLABS_VOICE_ID = os.getenv('ELEVENLABS_VOICE_ID')
 CHUNK_SIZE = 1024
 
 class YouTubeScraper:
